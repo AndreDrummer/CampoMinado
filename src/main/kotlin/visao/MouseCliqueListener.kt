@@ -5,9 +5,9 @@ import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 
 class MouseCliqueListener (
+    private val campo: Campo,
     private val onBotaoEsquerdo: (Campo) -> Unit,
     private val onBotaoDireito: (Campo) -> Unit,
-    private val campo: Campo,
 ) : MouseListener {
 
     override fun mousePressed(e: MouseEvent?) {
