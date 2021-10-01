@@ -21,6 +21,7 @@ class Tabuleiro (val qtdeLinhas: Int, val qtdeColunas: Int, private val qtdeMina
             campos.add(ArrayList())
             for(coluna in 0 until  qtdeColunas) {
                 val novoCampo = Campo(linha, coluna)
+                novoCampo.onEvento(this::verificarDerrotaOuVitoria)
                 campos[linha].add(novoCampo)
             }
         }
@@ -63,8 +64,31 @@ class Tabuleiro (val qtdeLinhas: Int, val qtdeColunas: Int, private val qtdeMina
         }
     }
 
+    private fun objetivoAlcancado(): Boolean {
+        var jogadorGanhou = true;
+        forEachCampo { if(!it.objetivoAlcancado) jogadorGanhou = false }
+        return jogadorGanhou;
+    }
+
+    private fun verificarDerrotaOuVitoria(campo: Campo, evento: CampoEvento) {
+        if(evento == CampoEvento.EXPLOSAO) {
+            callbacks.forEach { it(TabuleiroEvento.DERROTA) }
+        } else if(objetivoAlcancado()) {
+            callbacks.forEach { it(TabuleiroEvento.VITORIA) }
+        }
+    }
+
     fun forEachCampo(callback: (Campo) -> Unit) {
         campos.forEach { linha -> linha.forEach(callback) }
+    }
+
+    fun onEvento(callback: (TabuleiroEvento) -> Unit) {
+        callbacks.add(callback)
+    }
+
+    fun reiniciar() {
+        forEachCampo { it.reiniciar() }
+        sortearMinas()
     }
 
 
